@@ -1,8 +1,6 @@
 <?xml version="1.0"?>
 <launch>
-    <node name="bag" pkg="rosbag" type="play" args="--clock -r 0.5 $(env HOME)/Downloads/MappingTest.bag" />
     <param name="/use_sim_time" value="true" /> 
-
 
     <param name="scan_period" value="0.1" />
     <param name="vertical_angle" type="double" value="2.0" />
