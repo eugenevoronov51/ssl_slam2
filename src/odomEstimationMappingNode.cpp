@@ -118,7 +118,7 @@ void odom_estimation(){
             laserOdometry.pose.pose.position.z = t_current.z();
             pubLaserOdometry.publish(laserOdometry);*/
 
-            nav_msgs::Odometry laserOdometry;
+            /*nav_msgs::Odometry laserOdometry;
             laserOdometry.header.frame_id = "map"; 
             laserOdometry.child_frame_id = "base_link"; 
             laserOdometry.header.stamp = pointcloud_time;
@@ -136,7 +136,7 @@ void odom_estimation(){
             laserOdometry.pose.covariance.elems[21] = q_current.x();
             laserOdometry.pose.covariance.elems[28] = q_current.y();
             laserOdometry.pose.covariance.elems[35] = q_current.z();
-            laserOdometry.twist.covariance = laserOdometry.pose.covariance;
+            laserOdometry.twist.covariance = laserOdometry.pose.covariance;*/
 
             pubLaserOdometry.publish(laserOdometry);
 
@@ -158,7 +158,7 @@ int main(int argc, char **argv)
 {
     ros::init(argc, argv, "main");
     ros::NodeHandle nh;
-    /*
+
     int scan_line = 64;
     double vertical_angle = 2.0;
     double scan_period= 0.1;
@@ -187,7 +187,7 @@ int main(int argc, char **argv)
     pubSurfLaserCloud = nh.advertise<sensor_msgs::PointCloud2>("/surf_map", 100);
     pubLaserOdometry = nh.advertise<nav_msgs::Odometry>("/t265/odom/sample", 100);
     std::thread odom_estimation_process{odom_estimation};
-    */
+
     ros::spin();
 
     return 0;
