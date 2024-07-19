@@ -116,7 +116,7 @@ int main(int argc, char **argv)
 
     int scan_line = 64;
     double vertical_angle = 0.0;
-    double scan_period= 0.1;
+    double scan_period= 1.0;
     double max_dis = 120.0;
     double min_dis = 0.1;
 

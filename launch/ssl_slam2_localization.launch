@@ -4,7 +4,7 @@
     <node name="bag" pkg="rosbag" type="play" args="--clock -r 0.5 -d 5 $(env HOME)/Downloads/LocalizationTest.bag" />
     <param name="/use_sim_time" value="true" /> 
 
-    <param name="scan_period" value="0.1" />
+    <param name="scan_period" value="1.0" />
     <param name="vertical_angle" type="double" value="2.0" />
     <param name="max_dis" type="double" value="9.0" />
     <param name="map_resolution" type="double" value="0.05" />

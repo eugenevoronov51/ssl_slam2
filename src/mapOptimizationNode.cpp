@@ -26,7 +26,7 @@ std::queue<sensor_msgs::PointCloud2ConstPtr> pointCloudEdgeBuf;
 std::queue<sensor_msgs::PointCloud2ConstPtr> pointCloudSurfBuf;
 ros::Publisher map_pub;
 lidar::Lidar lidar_param;
-double scan_period= 0.1;
+double scan_period= 1.0;
 double map_resolution = 0.4;
 double min_map_update_frame = 8;
 double min_map_update_angle = 30;
@@ -77,7 +77,7 @@ void map_optimization(){
 
             //read data
             mutex_lock.lock();
-            /*if(!odometryBuf.empty() && (odometryBuf.front()->header.stamp.toSec()<pointCloudSurfBuf.front()->header.stamp.toSec()-0.5*lidar_param.scan_period || odometryBuf.front()->header.stamp.toSec()<pointCloudEdgeBuf.front()->header.stamp.toSec()-0.5*lidar_param.scan_period)){
+            if(!odometryBuf.empty() && (odometryBuf.front()->header.stamp.toSec()<pointCloudSurfBuf.front()->header.stamp.toSec()-0.5*lidar_param.scan_period || odometryBuf.front()->header.stamp.toSec()<pointCloudEdgeBuf.front()->header.stamp.toSec()-0.5*lidar_param.scan_period)){
                 ROS_WARN("time stamp unaligned error and odom discarded, pls check your data --> map optimization"); 
                 odometryBuf.pop();
                 mutex_lock.unlock();
@@ -86,17 +86,23 @@ void map_optimization(){
 
             if(!pointCloudSurfBuf.empty() && (pointCloudSurfBuf.front()->header.stamp.toSec()<odometryBuf.front()->header.stamp.toSec()-0.5*lidar_param.scan_period || pointCloudSurfBuf.front()->header.stamp.toSec()<pointCloudEdgeBuf.front()->header.stamp.toSec()-0.5*lidar_param.scan_period)){
                 pointCloudSurfBuf.pop();
-                ROS_INFO("time stamp unaligned with extra point cloud, pls check your data --> map optimization");
+                ROS_INFO("time stamp unaligned with extra point cloud, pls check your data --> map optimization for SurfBuf");
+                ROS_INFO("Odometry Time: %f", odometryBuf.front()->header.stamp.toSec());
+                ROS_INFO("PointCloudSurf Time: %f", pointCloudSurfBuf.front()->header.stamp.toSec());
+                ROS_INFO("PointCloudEdge Time: %f", pointCloudEdgeBuf.front()->header.stamp.toSec());
                 mutex_lock.unlock();
                 continue;  
             }
 
             if(!pointCloudEdgeBuf.empty() && (pointCloudEdgeBuf.front()->header.stamp.toSec()<odometryBuf.front()->header.stamp.toSec()-0.5*lidar_param.scan_period || pointCloudEdgeBuf.front()->header.stamp.toSec()<pointCloudSurfBuf.front()->header.stamp.toSec()-0.5*lidar_param.scan_period)){
                 pointCloudEdgeBuf.pop();
-                ROS_INFO("time stamp unaligned with extra point cloud, pls check your data --> map optimization");
+                ROS_INFO("time stamp unaligned with extra point cloud, pls check your data --> map optimization for EdgeBuf");
+                ROS_INFO("Odometry Time: %f", odometryBuf.front()->header.stamp.toSec());
+                ROS_INFO("PointCloudSurf Time: %f", pointCloudSurfBuf.front()->header.stamp.toSec());
+                ROS_INFO("PointCloudEdge Time: %f", pointCloudEdgeBuf.front()->header.stamp.toSec());
                 mutex_lock.unlock();
                 continue;  
-            } */
+            }
 
             //if time aligned 
             pcl::PointCloud<pcl::PointXYZRGB>::Ptr pointcloud_surf_in(new pcl::PointCloud<pcl::PointXYZRGB>());
