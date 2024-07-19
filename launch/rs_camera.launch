@@ -88,7 +88,6 @@
       <arg name="external_manager"         value="$(arg external_manager)"/>
       <arg name="manager"                  value="$(arg manager)"/>
       <arg name="usb_port_id"              value="$(arg usb_port_id)"/>
-      <arg name="device_type"              value="$(arg device_type)"/>
       <arg name="json_file_path"           value="$(arg json_file_path)"/>
 
       <arg name="enable_pointcloud"        value="$(arg enable_pointcloud)"/>
