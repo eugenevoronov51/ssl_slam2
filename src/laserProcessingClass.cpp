@@ -1,7 +1,10 @@
-// Author of SSL_SLAM2: Wang Han 
-// Email wh200720041@gmail.com
-// Homepage https://wanghan.pro
+/**
+  * Author of Fast_SSL_SLAM: Eugene Voronov
+  * Email johnvoronov@gmail.com
+  * c++ lib
+**/
 #include "laserProcessingClass.h"
+
 
 void LaserProcessingClass::init(lidar::Lidar lidar_param_in){
     
@@ -143,8 +146,8 @@ void LaserProcessingClass::featureExtraction(
         //float time_tmp = elapsed_seconds.count() * 1000;
         //total_time += time_tmp;
 
-        if(total_frame % 100 == 0)
-            ROS_INFO("Average feature extraction from sector time %f ms \n \n", total_time/total_frame);
+        //if(total_frame % 100 == 0)
+            //ROS_INFO("Average feature extraction from sector time %f ms \n \n", total_time/total_frame);
     }
 
 
