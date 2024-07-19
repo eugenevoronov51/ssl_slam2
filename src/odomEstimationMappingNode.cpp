@@ -82,14 +82,14 @@ void odom_estimation(){
             mutex_lock.unlock();
 
             if(is_odom_inited == false){
-                // odomEstimation.initMapWithPoints(pointcloud_edge_in, pointcloud_surf_in);
-                // is_odom_inited = true;
+                odomEstimation.initMapWithPoints(pointcloud_edge_in, pointcloud_surf_in);
+                is_odom_inited = true;
                 ROS_INFO("odom inited");
             }else{
                 //ROS_WARN("current frame %d", total_frame);
                 std::chrono::time_point<std::chrono::system_clock> start, end;
                 start = std::chrono::system_clock::now();
-                // odomEstimation.updatePointsToMap(pointcloud_edge_in, pointcloud_surf_in);
+                odomEstimation.updatePointsToMap(pointcloud_edge_in, pointcloud_surf_in);
                 end = std::chrono::system_clock::now();
                 std::chrono::duration<float> elapsed_seconds = end - start;
                 total_frame++;
