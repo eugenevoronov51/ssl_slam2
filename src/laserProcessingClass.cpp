@@ -9,7 +9,11 @@ void LaserProcessingClass::init(lidar::Lidar lidar_param_in){
 
 }
 
-void LaserProcessingClass::featureExtraction(const pcl::PointCloud<pcl::PointXYZRGB>::Ptr& pc_in, pcl::PointCloud<pcl::PointXYZRGB>::Ptr& pc_out_edge, pcl::PointCloud<pcl::PointXYZRGB>::Ptr& pc_out_surf){
+void LaserProcessingClass::featureExtraction(
+    const pcl::PointCloud<pcl::PointXYZRGB>::Ptr& pc_in, 
+    pcl::PointCloud<pcl::PointXYZRGB>::Ptr& pc_out_edge, 
+    pcl::PointCloud<pcl::PointXYZRGB>::Ptr& pc_out_surf
+){
 
     std::vector<int> indices;
     pcl::removeNaNFromPointCloud(*pc_in, indices);
