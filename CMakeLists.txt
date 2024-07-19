@@ -59,11 +59,11 @@ catkin_package(
 add_executable(ssl_slam2_laser_processing_node src/laserProcessingNode.cpp src/laserProcessingClass.cpp src/lidar.cpp)
 target_link_libraries(ssl_slam2_laser_processing_node ${EIGEN3_LIBRARIES} ${catkin_LIBRARIES} ${PCL_LIBRARIES} ${CERES_LIBRARIES})
 
-#add_executable(ssl_slam2_odom_estimation_localization_node src/odomEstimationLocalizationNode.cpp src/lidarOptimization.cpp src/lidar.cpp src/odomEstimationLocalizationClass.cpp)
-#target_link_libraries(ssl_slam2_odom_estimation_localization_node ${EIGEN3_LIBRARIES} ${catkin_LIBRARIES} ${PCL_LIBRARIES} ${CERES_LIBRARIES})
+add_executable(ssl_slam2_odom_estimation_localization_node src/odomEstimationLocalizationNode.cpp src/lidarOptimization.cpp src/lidar.cpp src/odomEstimationLocalizationClass.cpp)
+target_link_libraries(ssl_slam2_odom_estimation_localization_node ${EIGEN3_LIBRARIES} ${catkin_LIBRARIES} ${PCL_LIBRARIES} ${CERES_LIBRARIES})
 
-#add_executable(ssl_slam2_odom_estimation_mapping_node src/odomEstimationMappingNode.cpp src/lidarOptimization.cpp src/lidar.cpp src/odomEstimationMappingClass.cpp)
-#target_link_libraries(ssl_slam2_odom_estimation_mapping_node ${EIGEN3_LIBRARIES} ${catkin_LIBRARIES} ${PCL_LIBRARIES} ${CERES_LIBRARIES})
+add_executable(ssl_slam2_odom_estimation_mapping_node src/odomEstimationMappingNode.cpp src/lidarOptimization.cpp src/lidar.cpp src/odomEstimationMappingClass.cpp)
+target_link_libraries(ssl_slam2_odom_estimation_mapping_node ${EIGEN3_LIBRARIES} ${catkin_LIBRARIES} ${PCL_LIBRARIES} ${CERES_LIBRARIES})
 
 add_executable(ssl_slam2_map_optimization_node src/mapOptimizationNode.cpp src/mapOptimizationClass.cpp src/lidar.cpp src/lidarOptimization.cpp)
 target_link_libraries(ssl_slam2_map_optimization_node ${EIGEN3_LIBRARIES} ${catkin_LIBRARIES} ${PCL_LIBRARIES} ${CERES_LIBRARIES} gtsam)
