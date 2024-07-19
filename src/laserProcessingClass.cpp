@@ -5,6 +5,7 @@
 **/
 #include "laserProcessingClass.h"
 
+using namespace std;
 
 void LaserProcessingClass::init(lidar::Lidar lidar_param_in){
     
