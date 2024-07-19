@@ -36,13 +36,13 @@ ros::Publisher pubLaserOdometry;
 ros::Publisher pubEdgeLaserCloud;
 ros::Publisher pubSurfLaserCloud;
 
-void velodyneSurfHandler(const sensor_msgs::PointCloud2ConstPtr &laserCloudMsg)
+void lidarSurfHandler(const sensor_msgs::PointCloud2ConstPtr &laserCloudMsg)
 {
     mutex_lock.lock();
     pointCloudSurfBuf.push(laserCloudMsg);
     mutex_lock.unlock();
 }
-void velodyneEdgeHandler(const sensor_msgs::PointCloud2ConstPtr &laserCloudMsg)
+void lidarEdgeHandler(const sensor_msgs::PointCloud2ConstPtr &laserCloudMsg)
 {
     mutex_lock.lock();
     pointCloudEdgeBuf.push(laserCloudMsg);
@@ -105,6 +105,19 @@ void odom_estimation(){
             Eigen::Vector3d t_current = odomEstimation.odom.translation();
 
             // publish odometry
+            /*nav_msgs::Odometry laserOdometry;
+            laserOdometry.header.frame_id = "map"; 
+            laserOdometry.child_frame_id = "base_link"; 
+            laserOdometry.header.stamp = pointcloud_time;
+            laserOdometry.pose.pose.orientation.x = q_current.x();
+            laserOdometry.pose.pose.orientation.y = q_current.y();
+            laserOdometry.pose.pose.orientation.z = q_current.z();
+            laserOdometry.pose.pose.orientation.w = q_current.w();
+            laserOdometry.pose.pose.position.x = t_current.x();
+            laserOdometry.pose.pose.position.y = t_current.y();
+            laserOdometry.pose.pose.position.z = t_current.z();
+            pubLaserOdometry.publish(laserOdometry);*/
+
             nav_msgs::Odometry laserOdometry;
             laserOdometry.header.frame_id = "map"; 
             laserOdometry.child_frame_id = "base_link"; 
@@ -116,6 +129,15 @@ void odom_estimation(){
             laserOdometry.pose.pose.position.x = t_current.x();
             laserOdometry.pose.pose.position.y = t_current.y();
             laserOdometry.pose.pose.position.z = t_current.z();
+
+            laserOdometry.pose.covariance.elems[0] = t_current.x();
+            laserOdometry.pose.covariance.elems[7] = t_current.y();
+            laserOdometry.pose.covariance.elems[14] = t_current.z();
+            laserOdometry.pose.covariance.elems[21] = q_current.x();
+            laserOdometry.pose.covariance.elems[28] = q_current.y();
+            laserOdometry.pose.covariance.elems[35] = q_current.z();
+            laserOdometry.twist.covariance = laserOdometry.pose.covariance;
+
             pubLaserOdometry.publish(laserOdometry);
 
             static tf::TransformBroadcaster br;
@@ -158,9 +180,9 @@ int main(int argc, char **argv)
     lidar_param.setMinDistance(min_dis);
 
     odomEstimation.init(lidar_param, map_resolution);
-    // ros::Subscriber subLaserCloud = nh.subscribe<sensor_msgs::PointCloud2>("/velodyne_points_filtered", 100, velodyneHandler);
-    ros::Subscriber subEdgeLaserCloud = nh.subscribe<sensor_msgs::PointCloud2>("/laser_cloud_edge", 100, velodyneEdgeHandler);
-    ros::Subscriber subSurfLaserCloud = nh.subscribe<sensor_msgs::PointCloud2>("/laser_cloud_surf", 100, velodyneSurfHandler);
+    // ros::Subscriber subLaserCloud = nh.subscribe<sensor_msgs::PointCloud2>("/lidar_points_filtered", 100, lidarHandler);
+    ros::Subscriber subEdgeLaserCloud = nh.subscribe<sensor_msgs::PointCloud2>("/laser_cloud_edge", 100, lidarEdgeHandler);
+    ros::Subscriber subSurfLaserCloud = nh.subscribe<sensor_msgs::PointCloud2>("/laser_cloud_surf", 100, lidarSurfHandler);
     pubEdgeLaserCloud = nh.advertise<sensor_msgs::PointCloud2>("/edge_map", 100);
     pubSurfLaserCloud = nh.advertise<sensor_msgs::PointCloud2>("/surf_map", 100);
     pubLaserOdometry = nh.advertise<nav_msgs::Odometry>("/odom", 100);

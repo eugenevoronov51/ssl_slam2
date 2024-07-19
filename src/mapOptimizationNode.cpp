@@ -40,13 +40,13 @@ void odomCallback(const nav_msgs::Odometry::ConstPtr &msg)
     odometryBuf.push(msg);
     mutex_lock.unlock();
 }
-void velodyneSurfHandler(const sensor_msgs::PointCloud2ConstPtr &laserCloudMsg)
+void lidarSurfHandler(const sensor_msgs::PointCloud2ConstPtr &laserCloudMsg)
 {
     mutex_lock.lock();
     pointCloudSurfBuf.push(laserCloudMsg);
     mutex_lock.unlock();
 }
-void velodyneEdgeHandler(const sensor_msgs::PointCloud2ConstPtr &laserCloudMsg)
+void lidarEdgeHandler(const sensor_msgs::PointCloud2ConstPtr &laserCloudMsg)
 {
     mutex_lock.lock();
     pointCloudEdgeBuf.push(laserCloudMsg);
@@ -167,9 +167,9 @@ int main(int argc, char **argv)
     
     mapOptimization.init(map_resolution);
     last_pose.translation().x() = 100;
-    ros::Subscriber subEdgeLaserCloud = nh.subscribe<sensor_msgs::PointCloud2>("/laser_cloud_edge", 100, velodyneEdgeHandler);
-    ros::Subscriber subSurfLaserCloud = nh.subscribe<sensor_msgs::PointCloud2>("/laser_cloud_surf", 100, velodyneSurfHandler);
-    ros::Subscriber subOdometry = nh.subscribe<nav_msgs::Odometry>("/odom", 100, odomCallback);
+    ros::Subscriber subEdgeLaserCloud = nh.subscribe<sensor_msgs::PointCloud2>("/laser_cloud_edge", 100, lidarEdgeHandler);
+    ros::Subscriber subSurfLaserCloud = nh.subscribe<sensor_msgs::PointCloud2>("/laser_cloud_surf", 100, lidarSurfHandler);
+    ros::Subscriber subOdometry = nh.subscribe<nav_msgs::Odometry>("/t265/odom/sample", 100, odomCallback);
 
     //map saving service
     ros::ServiceServer srv_save = nh.advertiseService("save_map", saveMapCallback);

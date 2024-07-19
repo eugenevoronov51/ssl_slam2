@@ -36,7 +36,7 @@ ros::Publisher pubEdgePoints;
 ros::Publisher pubSurfPoints;
 ros::Publisher pubLaserCloudFiltered;
 
-void velodyneHandler(const sensor_msgs::PointCloud2ConstPtr &laserCloudMsg)
+void lidarHandler(const sensor_msgs::PointCloud2ConstPtr &laserCloudMsg)
 {
     mutex_lock.lock();
     pointCloudBuf.push(laserCloudMsg);
@@ -135,9 +135,9 @@ int main(int argc, char **argv)
 
     laserProcessing.init(lidar_param);
 
-    ros::Subscriber subLaserCloud = nh.subscribe<sensor_msgs::PointCloud2>("/camera/depth/color/points", 100, velodyneHandler);
+    ros::Subscriber subLaserCloud = nh.subscribe<sensor_msgs::PointCloud2>("/l515/depth/color/points", 100, lidarHandler);
 
-    pubLaserCloudFiltered = nh.advertise<sensor_msgs::PointCloud2>("/velodyne_points_filtered", 100);
+    pubLaserCloudFiltered = nh.advertise<sensor_msgs::PointCloud2>("/lidar_points_filtered", 100);
 
     pubEdgePoints = nh.advertise<sensor_msgs::PointCloud2>("/laser_cloud_edge", 100);
 
