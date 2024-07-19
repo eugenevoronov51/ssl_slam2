@@ -25,7 +25,7 @@ void LaserProcessingClass::featureExtraction(
     for (int i = 0; i < (int) pc_in->points.size(); i++){
         double new_x = pc_in->points[i].z;
         double new_y = -pc_in->points[i].x;
-        double new_z = -y_i;
+        double new_z = -pc_in->points[i].y;
         pc_in->points[i].x = new_x;
         pc_in->points[i].y = new_y;
         pc_in->points[i].z = new_z;

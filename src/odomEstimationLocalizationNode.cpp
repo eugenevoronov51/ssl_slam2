@@ -172,7 +172,7 @@ int main(int argc, char **argv)
     ros::Subscriber subEdgeLaserCloud = nh.subscribe<sensor_msgs::PointCloud2>("/laser_cloud_edge", 100, lidarEdgeHandler);
     ros::Subscriber subSurfLaserCloud = nh.subscribe<sensor_msgs::PointCloud2>("/laser_cloud_surf", 100, lidarSurfHandler);
     pubMap = nh.advertise<sensor_msgs::PointCloud2>("/map", 100);
-    pubLaserOdometry = nh.advertise<nav_msgs::Odometry>("/odom", 100);
+    pubLaserOdometry = nh.advertise<nav_msgs::Odometry>("/t265/odom/sample", 100);
     std::thread odom_estimation_process{odom_estimation};
 
     ros::spin();
