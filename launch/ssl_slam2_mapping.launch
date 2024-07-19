@@ -2,7 +2,7 @@
 <launch>
     <param name="/use_sim_time" value="true" /> 
 
-    <param name="scan_period" value="0.5" />
+    <param name="scan_period" value="0.1" />
     <param name="vertical_angle" type="double" value="2.0" />
     <param name="max_dis" type="double" value="9.0" />
     <param name="map_resolution" type="double" value="0.02" />
@@ -25,7 +25,7 @@
     <node pkg="ssl_slam2" type="ssl_slam2_map_optimization_node" name="ssl_slam2_map_optimization_node" output="screen"/>
 
 
-    <node pkg="tf" type="static_transform_publisher" name="baselink2cam_tf"  args="0.0 0 0.0 0 0 0 /base_link /l515_link 10" />
+    <!--node pkg="tf" type="static_transform_publisher" name="baselink2cam_tf"  args="0.0 0 0.0 0 0 0 /base_link /l515_link 10" /-->
 
     <arg name="rviz" default="true" />
     <group if="$(arg rviz)">
