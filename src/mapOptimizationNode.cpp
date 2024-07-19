@@ -77,7 +77,7 @@ void map_optimization(){
 
             //read data
             mutex_lock.lock();
-            if(!odometryBuf.empty() && (odometryBuf.front()->header.stamp.toSec()<pointCloudSurfBuf.front()->header.stamp.toSec()-0.5*lidar_param.scan_period || odometryBuf.front()->header.stamp.toSec()<pointCloudEdgeBuf.front()->header.stamp.toSec()-0.5*lidar_param.scan_period)){
+            /*if(!odometryBuf.empty() && (odometryBuf.front()->header.stamp.toSec()<pointCloudSurfBuf.front()->header.stamp.toSec()-0.5*lidar_param.scan_period || odometryBuf.front()->header.stamp.toSec()<pointCloudEdgeBuf.front()->header.stamp.toSec()-0.5*lidar_param.scan_period)){
                 ROS_WARN("time stamp unaligned error and odom discarded, pls check your data --> map optimization"); 
                 odometryBuf.pop();
                 mutex_lock.unlock();
@@ -96,7 +96,7 @@ void map_optimization(){
                 ROS_INFO("time stamp unaligned with extra point cloud, pls check your data --> map optimization");
                 mutex_lock.unlock();
                 continue;  
-            }
+            } */
 
             //if time aligned 
             pcl::PointCloud<pcl::PointXYZRGB>::Ptr pointcloud_surf_in(new pcl::PointCloud<pcl::PointXYZRGB>());
