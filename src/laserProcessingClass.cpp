@@ -32,7 +32,7 @@ void LaserProcessingClass::featureExtraction(
     }
 
 
-    std::vector<pcl::PointCloud<pcl::PointXYZRGB>::Ptr> laserCloud;
+    std::vector<pcl::PointCloud<pcl::PointXYZRGB>::Ptr> laserClouds;
 
     // Get firsts coords
     double x = pc_in->points[0].x;
@@ -70,7 +70,7 @@ void LaserProcessingClass::featureExtraction(
 
                 }
                 if(pc_temp->points.size()>0)
-                    laserCloud.push_back(pc_temp);
+                    laserClouds.push_back(pc_temp);
             }
             points_in_batch = 0;
             last_angle = angle;
@@ -78,7 +78,7 @@ void LaserProcessingClass::featureExtraction(
 
     }
 
-    //ROS_WARN_ONCE("total points array %d", laserCloud.size());
+    //ROS_WARN_ONCE("total points array %d", laserClouds.size());
     // std::cerr << "Total points array in laser clouds: " << laserClouds.size() << std::endl;
 
     for(int i = 0; i < (int) laserClouds.size(); i++) {
