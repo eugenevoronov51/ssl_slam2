@@ -22,69 +22,129 @@ void LaserProcessingClass::featureExtraction(
     for (int i = 0; i < (int) pc_in->points.size(); i++){
         double new_x = pc_in->points[i].z;
         double new_y = -pc_in->points[i].x;
-        double new_z = -pc_in->points[i].y;
+        double new_z = -y_i;
         pc_in->points[i].x = new_x;
         pc_in->points[i].y = new_y;
         pc_in->points[i].z = new_z;
     }
 
 
-    std::vector<pcl::PointCloud<pcl::PointXYZRGB>::Ptr> laserCloudScans;
+    std::vector<pcl::PointCloud<pcl::PointXYZRGB>::Ptr> laserCloud;
 
-    double last_angle = atan2(pc_in->points[0].z,pc_in->points[0].y) * 180 / M_PI;
-    int count =0;
+    // Get firsts coords
+    double x = pc_in->points[0].x;
+    double y = pc_in->points[0].y;
+    double z = pc_in->points[0].z;
+
+    double last_angle = atan2(z, y) * 180 / M_PI; // y, x
+    //std::cerr << "Last angle: " << last_angle << std::endl;
+
+    int points_in_batch = 0;
     int point_size = pc_in->points.size()-1;
     for (int i = 0; i < (int) pc_in->points.size(); i++)
     {
-     
+        // Current coords of points
+        double x_i = pc_in->points[i].x;
+        double y_i = pc_in->points[i].y;
+        double z_i = pc_in->points[i].z;
+
         //pc_in->points[i].intensity = (double)i / pc_in->points.size();
         int scanID=0;
-        double distance = sqrt(pc_in->points[i].x * pc_in->points[i].x + pc_in->points[i].y * pc_in->points[i].y + pc_in->points[i].z * pc_in->points[i].z);
-        double angle = atan2(pc_in->points[i].x,pc_in->points[i].z) * 180 / M_PI;
-        count++;
+        double distance = sqrt(pow(x_i, 2) + pow(y_i, 2) + pow(z_i, 2)); // Pythagorean theorem
+        double angle = atan2(x_i, z_i) * 180 / M_PI;
 
-        if(fabs(angle - last_angle)>0.05){
-            
-            if(count>30){
+        points_in_batch++;
+
+        // Get difference between last angel and current angel
+        if(fabs(angle - last_angle) > 0.1){
+            // std::cerr << "Difference between last angel and current angel: " << fabs(angle - last_angle) << std::endl;
+            if (points_in_batch > 100) {
+                //std::cerr << "Points in batch: " << points_in_batch << std::endl;
                 pcl::PointCloud<pcl::PointXYZRGB>::Ptr pc_temp(new pcl::PointCloud<pcl::PointXYZRGB>());
-                for(int k=0;k<count;k++){
-                    pc_temp->push_back(pc_in->points[i-count+k+1]);
+
+                for(int k=0;k<points_in_batch;k++){
+                    pc_temp->push_back(pc_in->points[i-points_in_batch+k+1]);
 
                 }
                 if(pc_temp->points.size()>0)
-                    laserCloudScans.push_back(pc_temp);
+                    laserCloud.push_back(pc_temp);
             }
-            count =0;
+            points_in_batch = 0;
             last_angle = angle;
         }
 
     }
 
-    //ROS_WARN_ONCE("total points array %d", laserCloudScans.size());
+    //ROS_WARN_ONCE("total points array %d", laserCloud.size());
+    // std::cerr << "Total points array in laser clouds: " << laserClouds.size() << std::endl;
 
-    for(int i = 0; i < laserCloudScans.size(); i++){
-        
-        std::vector<Double2d> cloudCurvature; 
-        int total_points = laserCloudScans[i]->points.size()-10;
-        for(int j = 5; j < (int)laserCloudScans[i]->points.size() - 5; j++){
-            double angle_difference = fabs((atan2(laserCloudScans[i]->points[j-5].y,laserCloudScans[i]->points[j-5].z)- atan2(laserCloudScans[i]->points[j+5].y,laserCloudScans[i]->points[j+5].z)) * 180 / M_PI); 
-            if(angle_difference>5){
-                //consider as a surf points
-                pc_out_surf->push_back(laserCloudScans[i]->points[j]);              
-                continue;  
+    for(int i = 0; i < (int) laserClouds.size(); i++) {
+        std::vector<Double2d> cloudDifferences;
+        int total_points = laserClouds[i]->points.size() - 10;
+
+        double max_distance = 0.005;
+        double min_distance = 0.001;
+
+        for (int j = 5; j < (int) laserClouds[i]->points.size() - 5; j++) {
+            double x_diff = laserClouds[i]->points[j - 5].x +
+                            laserClouds[i]->points[j - 4].x +
+                            laserClouds[i]->points[j - 3].x +
+                            laserClouds[i]->points[j - 2].x +
+                            laserClouds[i]->points[j - 1].x -
+                            10 * laserClouds[i]->points[j].x +
+                            laserClouds[i]->points[j + 1].x +
+                            laserClouds[i]->points[j + 2].x +
+                            laserClouds[i]->points[j + 3].x +
+                            laserClouds[i]->points[j + 4].x +
+                            laserClouds[i]->points[j + 5].x;
+
+            double y_diff = laserClouds[i]->points[j - 5].y +
+                            laserClouds[i]->points[j - 4].y +
+                            laserClouds[i]->points[j - 3].y +
+                            laserClouds[i]->points[j - 2].y +
+                            laserClouds[i]->points[j - 1].y -
+                            10 * laserClouds[i]->points[j].y +
+                            laserClouds[i]->points[j + 1].y +
+                            laserClouds[i]->points[j + 2].y +
+                            laserClouds[i]->points[j + 3].y +
+                            laserClouds[i]->points[j + 4].y +
+                            laserClouds[i]->points[j + 5].y;
+
+            double z_diff = laserClouds[i]->points[j - 5].z +
+                            laserClouds[i]->points[j - 4].z +
+                            laserClouds[i]->points[j - 3].z +
+                            laserClouds[i]->points[j - 2].z +
+                            laserClouds[i]->points[j - 1].z -
+                            10 * laserClouds[i]->points[j].z +
+                            laserClouds[i]->points[j + 1].z +
+                            laserClouds[i]->points[j + 2].z +
+                            laserClouds[i]->points[j + 3].z +
+                            laserClouds[i]->points[j + 4].z +
+                            laserClouds[i]->points[j + 5].z;
+
+            //std::cerr << "X diff: " << x_diff << " Y diff: " << y_diff << " Z diff: " << z_diff << std::endl;
+
+            Double2d distance(j, pow(x_diff, 2) + pow(y_diff, 2) + pow(z_diff, 2)); 
+
+            if (distance.value > min_distance and distance.value < max_distance) {
+                cloudDifferences.push_back(distance);
+                min_distance = pow(x_diff, 2) + pow(y_diff, 2) + pow(z_diff, 2);
+                // std::cerr << "Min distance: " << min_distance << std::endl;
             }
-
-            double diffX = laserCloudScans[i]->points[j - 5].x + laserCloudScans[i]->points[j - 4].x + laserCloudScans[i]->points[j - 3].x + laserCloudScans[i]->points[j - 2].x + laserCloudScans[i]->points[j - 1].x - 10 * laserCloudScans[i]->points[j].x + laserCloudScans[i]->points[j + 1].x + laserCloudScans[i]->points[j + 2].x + laserCloudScans[i]->points[j + 3].x + laserCloudScans[i]->points[j + 4].x + laserCloudScans[i]->points[j + 5].x;
-            double diffY = laserCloudScans[i]->points[j - 5].y + laserCloudScans[i]->points[j - 4].y + laserCloudScans[i]->points[j - 3].y + laserCloudScans[i]->points[j - 2].y + laserCloudScans[i]->points[j - 1].y - 10 * laserCloudScans[i]->points[j].y + laserCloudScans[i]->points[j + 1].y + laserCloudScans[i]->points[j + 2].y + laserCloudScans[i]->points[j + 3].y + laserCloudScans[i]->points[j + 4].y + laserCloudScans[i]->points[j + 5].y;
-            double diffZ = laserCloudScans[i]->points[j - 5].z + laserCloudScans[i]->points[j - 4].z + laserCloudScans[i]->points[j - 3].z + laserCloudScans[i]->points[j - 2].z + laserCloudScans[i]->points[j - 1].z - 10 * laserCloudScans[i]->points[j].z + laserCloudScans[i]->points[j + 1].z + laserCloudScans[i]->points[j + 2].z + laserCloudScans[i]->points[j + 3].z + laserCloudScans[i]->points[j + 4].z + laserCloudScans[i]->points[j + 5].z;
-            Double2d distance(j,diffX * diffX + diffY * diffY + diffZ * diffZ);
-            cloudCurvature.push_back(distance);
-
         }
 
-        featureExtractionFromSector(laserCloudScans[i],cloudCurvature, pc_out_edge, pc_out_surf);
-            
-    
+        //std::chrono::time_point<std::chrono::system_clock> start, end;
+        //start = std::chrono::system_clock::now();
+        featureExtractionFromSector(laserClouds[i], cloudDifferences, pc_out_edge, pc_out_surf, min_distance);
+        //end = std::chrono::system_clock::now();
+        //std::chrono::duration<float> elapsed_seconds = end - start;
+        //total_frame++;
+
+        //float time_tmp = elapsed_seconds.count() * 1000;
+        //total_time += time_tmp;
+
+        if(total_frame % 100 == 0)
+            ROS_INFO("Average feature extraction from sector time %f ms \n \n", total_time/total_frame);
     }
 
 
@@ -100,74 +160,66 @@ void LaserProcessingClass::featureExtraction(
     extract.setIndices(inliers);
     extract.setNegative(true);
     extract.filter(*pc_out_edge);
-*/
-
+    */
 }
 
-
-void LaserProcessingClass::featureExtractionFromSector(const pcl::PointCloud<pcl::PointXYZRGB>::Ptr& pc_in, std::vector<Double2d>& cloudCurvature, pcl::PointCloud<pcl::PointXYZRGB>::Ptr& pc_out_edge, pcl::PointCloud<pcl::PointXYZRGB>::Ptr& pc_out_surf){
-
-    std::sort(cloudCurvature.begin(), cloudCurvature.end(), [](const Double2d & a, const Double2d & b)
-    { 
+void LaserProcessingClass::featureExtractionFromSector(
+    const pcl::PointCloud<pcl::PointXYZRGB>::Ptr& pc_in,
+    std::vector<Double2d>& cloudDifferences,
+    pcl::PointCloud<pcl::PointXYZRGB>::Ptr& pc_out_edge,
+    pcl::PointCloud<pcl::PointXYZRGB>::Ptr& pc_out_surf,
+    double min_distance
+) {
+    sort(cloudDifferences.begin(), cloudDifferences.end(), [](const Double2d& a, const Double2d& b){
         return a.value < b.value; 
     });
 
+    int largest_picked_points_number = 0;
+    vector<int> picked_points;
 
-    int largestPickedNum = 0;
-    std::vector<int> picked_points;
-    int point_info_count =0;
-    for (int i = cloudCurvature.size()-1; i >= 0; i--)
-    {
-        int ind = cloudCurvature[i].id; 
-        if(std::find(picked_points.begin(), picked_points.end(), ind)==picked_points.end()){
-            if(cloudCurvature[i].value <= 0.1){
-                break;
-            }
+    for (int i = cloudDifferences.size() - 1; i >= 0; i--) {
+        int diff_id = cloudDifferences[i].id;
+
+        if (find(picked_points.begin(), picked_points.end(), diff_id) == picked_points.end()) {
+            largest_picked_points_number++;
+            picked_points.push_back(diff_id);
+
+            pc_out_surf->push_back(pc_in->points[diff_id]);
             
-            largestPickedNum++;
-            picked_points.push_back(ind);
-            
-            if (largestPickedNum <= 10){
-                pc_out_edge->push_back(pc_in->points[ind]);
-                point_info_count++;
-            }else{
+            if (largest_picked_points_number <= 10) {
+                pc_out_edge->push_back(pc_in->points[diff_id]);
+            } else {
                 break;
             }
 
-            for(int k=1;k<=5;k++){
-                double diffX = pc_in->points[ind + k].x - pc_in->points[ind + k - 1].x;
-                double diffY = pc_in->points[ind + k].y - pc_in->points[ind + k - 1].y;
-                double diffZ = pc_in->points[ind + k].z - pc_in->points[ind + k - 1].z;
-                if (diffX * diffX + diffY * diffY + diffZ * diffZ > 0.05){
+            for (int k = 1; k <= 5; k++) {
+                double x_diff = pc_in->points[diff_id + k].x - pc_in->points[diff_id + k - 1].x;
+                double y_diff = pc_in->points[diff_id + k].y - pc_in->points[diff_id + k - 1].y;
+                double z_diff = pc_in->points[diff_id + k].z - pc_in->points[diff_id + k - 1].z;
+
+                if (pow(x_diff, 2) + pow(y_diff, 2) + pow(z_diff, 2) > min_distance) {
                     break;
                 }
-                picked_points.push_back(ind+k);
+
+                picked_points.push_back(diff_id + k);
             }
-            for(int k=-1;k>=-5;k--){
-                double diffX = pc_in->points[ind + k].x - pc_in->points[ind + k + 1].x;
-                double diffY = pc_in->points[ind + k].y - pc_in->points[ind + k + 1].y;
-                double diffZ = pc_in->points[ind + k].z - pc_in->points[ind + k + 1].z;
-                if (diffX * diffX + diffY * diffY + diffZ * diffZ > 0.05){
+
+            for (int k = -1; k >= -5; k--) {
+                double x_diff = pc_in->points[diff_id + k].x - pc_in->points[diff_id + k + 1].x;
+                double y_diff = pc_in->points[diff_id + k].y - pc_in->points[diff_id + k + 1].y;
+                double z_diff = pc_in->points[diff_id + k].z - pc_in->points[diff_id + k + 1].z;
+
+                if (pow(x_diff, 2) + pow(y_diff, 2) + pow(z_diff, 2) > min_distance) {
                     break;
                 }
-                picked_points.push_back(ind+k);
+
+                picked_points.push_back(diff_id + k);
             }
-
         }
     }
-
-    for (int i = 0; i <= (int)cloudCurvature.size()-1; i++)
-    {
-        int ind = cloudCurvature[i].id; 
-        if( std::find(picked_points.begin(), picked_points.end(), ind)==picked_points.end())
-        {
-            pc_out_surf->push_back(pc_in->points[ind]);
-        }
-    }
-    
-
-
 }
+
+
 LaserProcessingClass::LaserProcessingClass(){
     
 }

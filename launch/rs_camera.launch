@@ -1,7 +1,5 @@
 <?xml version="1.0"?>
 <launch>
-  <arg name="usb_port_id"         default=""/>
-  <arg name="device_type"         default=""/>
   <arg name="json_file_path"      default=""/>
   <arg name="device_type_camera1" default="t265"/>
   <arg name="device_type_camera2" default="l515"/>

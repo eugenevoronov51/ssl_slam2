@@ -56,7 +56,7 @@ Visualization Manager:
       Value: false
     - Class: rviz/Image
       Enabled: true
-      Image Topic: /camera/color/image_raw
+      Image Topic: /l515/color/image_raw
       Max Value: 1
       Median window: 5
       Min Value: 0
@@ -131,7 +131,7 @@ Visualization Manager:
       Size (Pixels): 1
       Size (m): 0.009999999776482582
       Style: Points
-      Topic: /camera/depth/color/points
+      Topic: /l515/depth/color/points
       Unreliable: false
       Use Fixed Frame: true
       Use rainbow: false

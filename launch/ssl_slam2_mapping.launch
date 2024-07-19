@@ -25,7 +25,7 @@
     <node pkg="ssl_slam2" type="ssl_slam2_map_optimization_node" name="ssl_slam2_map_optimization_node" output="screen"/>
 
 
-    <node pkg="tf" type="static_transform_publisher" name="baselink2cam_tf"  args="0.0 0 0.0 0 0 0 /base_link /camera_link 10" />
+    <node pkg="tf" type="static_transform_publisher" name="baselink2cam_tf"  args="0.0 0 0.0 0 0 0 /base_link /l515_link 10" />
 
     <arg name="rviz" default="true" />
     <group if="$(arg rviz)">
