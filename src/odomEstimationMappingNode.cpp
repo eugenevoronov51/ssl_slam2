@@ -82,14 +82,14 @@ void odom_estimation(){
             mutex_lock.unlock();
 
             if(is_odom_inited == false){
-                odomEstimation.initMapWithPoints(pointcloud_edge_in, pointcloud_surf_in);
-                is_odom_inited = true;
+                // odomEstimation.initMapWithPoints(pointcloud_edge_in, pointcloud_surf_in);
+                // is_odom_inited = true;
                 ROS_INFO("odom inited");
             }else{
                 //ROS_WARN("current frame %d", total_frame);
                 std::chrono::time_point<std::chrono::system_clock> start, end;
                 start = std::chrono::system_clock::now();
-                odomEstimation.updatePointsToMap(pointcloud_edge_in, pointcloud_surf_in);
+                // odomEstimation.updatePointsToMap(pointcloud_edge_in, pointcloud_surf_in);
                 end = std::chrono::system_clock::now();
                 std::chrono::duration<float> elapsed_seconds = end - start;
                 total_frame++;
@@ -140,12 +140,12 @@ void odom_estimation(){
 
             pubLaserOdometry.publish(laserOdometry);
 
-            static tf::TransformBroadcaster br;
+            /*static tf::TransformBroadcaster br;
             tf::Transform transform;
             transform.setOrigin( tf::Vector3(t_current.x(), t_current.y(), t_current.z()) );
             tf::Quaternion q(q_current.x(),q_current.y(),q_current.z(),q_current.w());
             transform.setRotation(q);
-            br.sendTransform(tf::StampedTransform(transform, ros::Time::now(), "map", "base_link"));
+            br.sendTransform(tf::StampedTransform(transform, ros::Time::now(), "map", "base_link"));*/
 
         }
         //sleep 2 ms every time
@@ -158,7 +158,7 @@ int main(int argc, char **argv)
 {
     ros::init(argc, argv, "main");
     ros::NodeHandle nh;
-
+    /*
     int scan_line = 64;
     double vertical_angle = 2.0;
     double scan_period= 0.1;
@@ -187,7 +187,7 @@ int main(int argc, char **argv)
     pubSurfLaserCloud = nh.advertise<sensor_msgs::PointCloud2>("/surf_map", 100);
     pubLaserOdometry = nh.advertise<nav_msgs::Odometry>("/t265/odom/sample", 100);
     std::thread odom_estimation_process{odom_estimation};
-
+    */
     ros::spin();
 
     return 0;

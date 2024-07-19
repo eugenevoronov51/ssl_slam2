@@ -54,18 +54,6 @@ Visualization Manager:
       Plane Cell Count: 15
       Reference Frame: map
       Value: false
-    - Class: rviz/Image
-      Enabled: true
-      Image Topic: /l515/color/image_raw
-      Max Value: 1
-      Median window: 5
-      Min Value: 0
-      Name: Image
-      Normalize Range: true
-      Queue Size: 2
-      Transport Hint: raw
-      Unreliable: false
-      Value: true
     - Class: rviz/TF
       Enabled: true
       Frame Timeout: 15

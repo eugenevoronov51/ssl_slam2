@@ -11,18 +11,18 @@
     <param name="map_path" type="str" value="$(find ssl_slam2)/map/" />
 
     <param name="min_map_update_distance" type="double" value="1.0" />
-    <param name="min_map_update_angle" type="double" value="30" />
+    <param name="min_map_update_angle" type="double" value="10" />
     <param name="min_map_update_frame" type="double" value="8" />
 
     <include file="$(find ssl_slam2)/launch/rs_camera.launch">
-        <arg name="color_width" value="1280" />
-        <arg name="color_height" value="720" />
+        <arg name="color_width" value="640" />
+        <arg name="color_height" value="480" />
         <arg name="filters" value="pointcloud" />    
     </include>
 
-    <!--node pkg="ssl_slam2" type="ssl_slam2_laser_processing_node" name="ssl_slam2_laser_processing_node" output="log"/>
+    <node pkg="ssl_slam2" type="ssl_slam2_laser_processing_node" name="ssl_slam2_laser_processing_node" output="log"/>
     <node pkg="ssl_slam2" type="ssl_slam2_odom_estimation_mapping_node" name="ssl_slam2_odom_estimation_mapping_node" output="log"/>
-    <node pkg="ssl_slam2" type="ssl_slam2_map_optimization_node" name="ssl_slam2_map_optimization_node" output="screen"/-->
+    <node pkg="ssl_slam2" type="ssl_slam2_map_optimization_node" name="ssl_slam2_map_optimization_node" output="screen">
 
 
     <node pkg="tf" type="static_transform_publisher" name="baselink2cam_tf"  args="0.0 0 0.0 0 0 0 /base_link /l515_link 10" />
